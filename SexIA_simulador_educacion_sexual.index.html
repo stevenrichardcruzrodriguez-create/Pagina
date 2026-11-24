@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>SexIA · Simulador de Educación Sexual Integral</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080f1e;--bg2:#101b31;--panel:#111f36;--panel2:#172944;--line:#29415f;--ink:#edf4ff;--muted:#9eb0ca;--blue:#55a7ff;--pink:#ef78b5;--teal:#49d3bd;--yellow:#f4c86a;--red:#ff7b83;--purple:#b59aff;--fontD:'Chakra Petch',sans-serif;--fontB:'Inter',sans-serif}
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:var(--fontB);background:var(--bg);color:var(--ink)}body{overflow:hidden}button,select,input{font:inherit;color:inherit}button{cursor:pointer}
+#app{height:100dvh;display:grid;grid-template-columns:minmax(0,1fr) 360px;grid-template-rows:66px minmax(0,1fr)}
+header{grid-column:1/-1;display:flex;align-items:center;gap:14px;padding:0 20px;background:linear-gradient(100deg,#111c34,#10182b 60%,#24172e);border-bottom:1px solid var(--line);z-index:5}
+.logo{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#2878c7,#d65d9e);box-shadow:0 0 22px #4a9dff44}
+.logo svg{width:25px}.brand h1{font:700 20px var(--fontD);margin:0;letter-spacing:.5px}.brand h1 span{color:var(--pink)}.brand p{margin:1px 0 0;color:var(--muted);font-size:10px;letter-spacing:1.1px;text-transform:uppercase}
+.chip{font:600 11px var(--fontD);color:#a8d4ff;border:1px solid #345b86;background:#132c49;padding:6px 10px;border-radius:99px}
+.spacer{flex:1}.hbtn,.btn{border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:9px 12px;font-size:12px;font-weight:700;transition:.18s}
+.hbtn:hover,.btn:hover{border-color:var(--blue);transform:translateY(-1px)}.hbtn.off{color:var(--muted)}
+#stage{position:relative;min-height:0;overflow:hidden;background:radial-gradient(ellipse at 50% 35%,#1a3456 0%,#101b30 45%,#080f1e 100%)}
+#viewport{position:absolute;inset:0}#viewport canvas{width:100%;height:100%;display:block}
+.overlay{position:absolute;z-index:2;pointer-events:none}.phase-badge{top:20px;left:22px;background:#0c1a2cdd;border:1px solid #355477;border-radius:12px;padding:10px 14px;backdrop-filter:blur(10px)}
+.phase-badge small{display:block;color:var(--muted);font-size:9px;letter-spacing:1.4px;text-transform:uppercase}.phase-badge strong{font:700 17px var(--fontD)}
+.stage-hint{top:22px;right:22px;color:#c4d6ee;background:#0c1a2caa;border:1px solid #355477;border-radius:10px;padding:9px 12px;font-size:11px}
+#labels{position:absolute;inset:0;pointer-events:none;z-index:3}.tag{position:absolute;padding:5px 8px;border-radius:7px;background:#0a1527dd;border:1px solid #4d7197;color:#eaf4ff;font-size:10px;white-space:nowrap;transform:translate(-50%,-50%);pointer-events:auto;cursor:pointer}
+#selection{position:absolute;z-index:4;left:22px;bottom:106px;width:min(300px,42%);padding:13px 15px;border:1px solid #3c6287;background:#0c1b30eF;border-radius:13px;backdrop-filter:blur(12px);display:none}
+#selection strong{font:700 16px var(--fontD);color:#9ed0ff}#selection p{font-size:11px;line-height:1.5;color:#c4d2e6;margin:6px 0 0}
+.timeline{position:absolute;z-index:4;bottom:18px;left:22px;right:22px;background:#0b1729e8;border:1px solid #263f60;border-radius:14px;padding:12px 14px;backdrop-filter:blur(10px)}
+.timeline-top{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;margin-bottom:9px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.step{border:1px solid #30445f;background:#14243b;border-radius:8px;padding:8px 6px;text-align:left;font-size:10px;color:#b9c9df}.step b{display:block;font:700 12px var(--fontD);margin-bottom:2px}.step.active{border-color:var(--blue);background:#1b3a5d;color:#fff;box-shadow:0 0 15px #55a7ff24}
+#panel{min-height:0;overflow:auto;background:linear-gradient(180deg,#101b30,#0b1425);border-left:1px solid var(--line);padding:16px;scrollbar-color:#427fb8 #101b30;scrollbar-width:thin}
+.panel-title{font:700 17px var(--fontD);margin:0 0 4px}.sub{font-size:11px;color:var(--muted);line-height:1.5;margin:0 0 14px}
+.section{padding:13px 0;border-top:1px solid #243752}.section h3{font:700 12px var(--fontD);letter-spacing:.7px;text-transform:uppercase;color:#8fc6ff;margin:0 0 10px}
+.row{display:flex;gap:7px;align-items:center;margin:8px 0}.row>*{flex:1}.btn.primary{background:linear-gradient(120deg,#246db1,#814a91);border-color:#568bc2}.btn.small{padding:8px 7px;font-size:11px}.btn.selected{border-color:var(--pink);background:#42243d}
+input[type=range]{width:100%;accent-color:var(--pink)}select{width:100%;padding:9px;border-radius:9px;background:#172944;border:1px solid var(--line);font-size:11px}
+.control-label{display:flex;justify-content:space-between;color:#b8c8dd;font-size:11px;margin:10px 0 5px}
+.toggle{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#c2d0e2;padding:5px 0}.toggle input{accent-color:var(--pink);width:16px;height:16px}
+.phase-card{background:linear-gradient(135deg,#172c48,#241d3b);border:1px solid #3b5577;border-radius:12px;padding:12px}
+.phase-card .kicker{color:var(--pink);font-size:9px;letter-spacing:1.2px;text-transform:uppercase}.phase-card h3{font:700 16px var(--fontD);margin:5px 0}.phase-card p{font-size:11px;line-height:1.55;color:#d0dced;margin:5px 0}.observe{color:#8ed9d0!important}
+.part-grid{display:flex;flex-wrap:wrap;gap:6px}.part-chip{border:1px solid #34506e;background:#172942;color:#cbd9ec;border-radius:99px;padding:6px 9px;font-size:10px}.part-chip.active{border-color:var(--pink);background:#40253e;color:white}
+.module-list{display:grid;gap:7px}.module{display:flex;align-items:center;gap:10px;text-align:left;width:100%;padding:10px;border:1px solid #2a405d;background:#14243b;border-radius:10px}.module.active{border-color:#65aaff;background:#193657}.module .num{width:26px;height:26px;flex:none;display:grid;place-items:center;border-radius:8px;background:#253f60;color:#a9d4ff;font:700 12px var(--fontD)}.module b{display:block;font-size:11px}.module small{display:block;color:var(--muted);font-size:9px;margin-top:3px}
+.content-card{border:1px solid #2c4565;background:#13243b;border-radius:12px;padding:13px;margin:9px 0}.content-card h4{font:700 14px var(--fontD);margin:0 0 7px;color:#d7eaff}.content-card p,.content-card li{font-size:11px;line-height:1.55;color:#c0cfe2}.content-card ul{padding-left:17px;margin:7px 0}.note{border-left:3px solid var(--teal);padding:9px 11px;background:#12302f77;border-radius:0 8px 8px 0;font-size:10px;line-height:1.5;color:#c5e8e2;margin-top:10px}
+.quiz-option{display:block;width:100%;text-align:left;padding:10px;border:1px solid #344b69;background:#182b45;border-radius:9px;margin:7px 0;font-size:11px}.quiz-option:hover{border-color:var(--blue)}.feedback{font-size:11px;line-height:1.5;padding:10px;border-radius:9px;margin-top:8px;display:none}.feedback.good{display:block;background:#12352f;border:1px solid #2d806e;color:#a8e8d9}.feedback.bad{display:block;background:#3a202e;border:1px solid #85475f;color:#ffd0d8}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:20;background:#172b46;border:1px solid #4d739b;border-radius:99px;padding:10px 15px;font-size:11px;opacity:0;transition:.25s;pointer-events:none}#toast.show{opacity:1}
+#loader{position:absolute;inset:0;z-index:10;display:grid;place-items:center;background:#091222;transition:.4s}#loader.done{opacity:0;pointer-events:none}.loader-inner{text-align:center;color:#a9c7eb;font:600 12px var(--fontD)}.orb{width:44px;height:44px;border:3px solid #31557d;border-top-color:var(--pink);border-radius:50%;margin:0 auto 12px;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+#moduleView{display:none}.hidden{display:none!important}
+@media(max-width:950px){body{overflow:auto}#app{height:auto;min-height:100dvh;display:flex;flex-direction:column}header{height:62px;flex:none;padding:0 12px}.brand h1{font-size:17px}.chip{display:none}.hbtn{padding:8px}.hbtn .long{display:none}#stage{height:58vh;min-height:390px;flex:none}#panel{overflow:visible;border-left:0;border-top:1px solid var(--line);padding:14px;flex:1}.timeline{left:10px;right:10px;bottom:10px;padding:9px}.phase-badge{left:10px;top:10px}.stage-hint{right:10px;top:10px}#selection{left:10px;bottom:95px}.step{font-size:9px;padding:6px 4px}}
+@media(max-width:520px){.brand p{display:none}.brand{gap:8px}.logo{width:32px;height:32px}.hbtn{font-size:10px;padding:7px}.stage-hint{font-size:9px}.timeline-top{font-size:9px}.step b{font-size:10px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div id="app">
+<header>
+ <div class="logo" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M16 3 27 8v8c0 7-5 11-11 13C10 27 5 23 5 16V8l11-5Z" stroke="white" stroke-width="2"/><path d="M11 16h10M16 11v10" stroke="white" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+ <div class="brand"><h1>Sex<span>IA</span></h1><p>Laboratorio de educación sexual integral</p></div>
+ <span class="chip">APRENDE · DECIDE · CUIDA</span><div class="spacer"></div>
+ <button class="hbtn" id="soundBtn" title="Activar o silenciar sonido">♫ <span class="long">Sonido: apagado</span></button>
+ <button class="hbtn" id="fullBtn" title="Pantalla completa">⛶ <span class="long">Pantalla completa</span></button>
+</header>
+<main id="stage">
+ <div id="viewport"></div><div id="labels"></div>
+ <div class="overlay phase-badge"><small id="phaseNo">MÓDULO 01 / 08</small><strong id="phaseName">Conoce tu cuerpo</strong></div>
+ <div class="overlay stage-hint">Arrastra para girar · rueda para acercar</div>
+ <div id="selection"><strong id="selName"></strong><p id="selDesc"></p></div>
+ <div class="timeline">
+  <div class="timeline-top"><span>RUTA DE APRENDIZAJE</span><span id="progressText">01 / 08</span></div>
+  <div class="steps" id="timelineSteps">
+   <button class="step active" data-phase="0"><b>01</b>Cuerpo</button><button class="step" data-phase="1"><b>02</b>Pubertad</button><button class="step" data-phase="2"><b>03</b>Consentimiento</button><button class="step" data-phase="3"><b>04</b>Prevención</button>
+  </div>
+ </div>
+ <div id="loader"><div class="loader-inner"><div class="orb"></div>PREPARANDO EL LABORATORIO SEXIA…</div></div>
+</main>
+<aside id="panel">
+ <section id="simView">
+  <h2 class="panel-title">Panel de exploración</h2><p class="sub">Explora el modelo, cambia la vista y aprende a tu ritmo.</p>
+  <div class="section">
+   <h3>Controles del simulador</h3>
+   <div class="row"><button class="btn primary" id="playBtn">Ⅱ Pausar</button><button class="btn" id="stepBtn">Siguiente etapa →</button></div>
+   <div class="control-label"><span>Velocidad de recorrido</span><b id="speedVal">1.0×</b></div><input id="speed" type="range" min=".4" max="2" step=".1" value="1">
+   <div class="row"><button class="btn small" id="explodeBtn">◈ Vista expandida</button><button class="btn small" id="centerBtn">◎ Centrar</button></div>
+   <div class="control-label"><span>Separación de elementos</span><b id="explodeVal">0%</b></div><input id="explode" type="range" min="0" max="100" value="0">
+   <label class="toggle">Vista de capas / rayos X <input type="checkbox" id="xray"></label>
+   <label class="toggle">Mostrar etiquetas <input type="checkbox" id="labelsToggle" checked></label>
+   <label class="toggle">Giro automático <input type="checkbox" id="rotateToggle"></label>
+   <div class="control-label"><span>Calidad gráfica</span></div><select id="quality"><option value="high">Alta</option><option value="medium" selected>Media</option><option value="low">Baja</option></select>
+  </div>
+  <div class="section"><h3>Ángulo de observación</h3>
+   <div class="row"><button class="btn small cam" data-cam="front">Frontal</button><button class="btn small cam" data-cam="side">Lateral</button></div>
+   <div class="row"><button class="btn small cam" data-cam="top">Superior</button><button class="btn small cam" data-cam="iso">Isométrica</button></div>
+   <div class="row"><button class="btn small" id="randomBtn">Vista sorpresa</button><button class="btn small" id="resetBtn">Reiniciar</button></div>
+   <button class="btn primary" id="captureBtn" style="width:100%">▣ Capturar imagen PNG</button>
+  </div>
+  <div class="section"><h3>Elementos del modelo</h3><div class="part-grid" id="partLegend"></div><p class="sub" style="margin:9px 0 0">Selecciona una parte del modelo o una etiqueta para conocer su función.</p></div>
+  <div class="section"><h3>Atajos</h3><p class="sub">Espacio: reproducir/pausar · E: vista expandida · →: siguiente módulo · X: rayos X · L: etiquetas · R: reiniciar · Esc: cerrar ficha.</p></div>
+  <div class="section"><h3>Contenido educativo</h3><div class="module-list" id="moduleList"></div></div>
+  <div class="section"><button class="btn primary" id="openLearning" style="width:100%">Abrir actividades y casos prácticos →</button></div>
+ </section>
+ <section id="moduleView">
+  <button class="btn small" id="backBtn">← Volver al simulador</button>
+  <h2 class="panel-title" id="moduleTitle" style="margin-top:14px"></h2><p class="sub" id="moduleSub"></p>
+  <div id="moduleContent"></div>
+  <div class="row"><button class="btn" id="prevModule">← Anterior</button><button class="btn primary" id="nextModule">Siguiente →</button></div>
+ </section>
+</aside>
+</div>
+<div id="toast" role="status"></div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+<script type="module">
+const $=s=>document.querySelector(s), clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const modules=[
+ {title:"Conoce tu cuerpo",sub:"Anatomía, autocuidado y respeto por la diversidad corporal.",desc:"Conocer el cuerpo ayuda a identificar cambios, cuidar la salud y comunicar dudas. Los cuerpos tienen variaciones normales; no existe un único ritmo de desarrollo.",cards:[
+  ["Anatomía reproductiva","El útero, los ovarios y las trompas de Falopio forman parte del sistema reproductor interno femenino. Los testículos producen espermatozoides y testosterona. La anatomía externa también merece conocerse con nombres correctos y sin vergüenza."],
+  ["Higiene y autocuidado","Lava la zona genital externa con agua y productos suaves si los necesitas. Evita duchas vaginales, perfumes o productos irritantes. Usa ropa limpia y consulta a un profesional si hay dolor, picazón persistente, lesiones o secreciones inusuales."],
+  ["Respeto corporal","Cada persona tiene derecho a la privacidad, a recibir información confiable y a decidir quién puede tocar su cuerpo. No se debe comparar ni ridiculizar el cuerpo de otras personas."]],quiz:{q:"¿Cuál es una práctica adecuada de autocuidado?",opts:["Usar productos perfumados dentro de la vagina","Lavar suavemente la zona externa y evitar irritantes","Ignorar molestias persistentes"],correct:1,why:"La higiene externa suave y evitar productos irritantes ayudan a cuidar la zona genital. Las molestias persistentes deben consultarse."}},
+ {title:"Pubertad y cambios",sub:"Cambios físicos, emocionales y ritmos de desarrollo.",desc:"La pubertad es una etapa de cambios hormonales. No comienza ni avanza igual para todas las personas; tener dudas o sentir emociones intensas es común.",cards:[
+  ["Cambios físicos","Puede crecer el vello, cambiar la voz, aumentar la sudoración, aparecer acné y cambiar la forma del cuerpo. En algunas personas comienza la menstruación; en otras, las primeras eyaculaciones. Estos procesos no ocurren al mismo tiempo en todas."],
+  ["Cambios emocionales","Pueden aparecer nuevas emociones, atracciones, inseguridades o necesidad de independencia. Dormir bien, hablar con alguien de confianza y pedir ayuda son formas saludables de cuidarse."],
+  ["Menstruación","El ciclo menstrual varía entre personas y puede ser irregular al inicio. Registrar fechas y síntomas puede ayudar. Dolor intenso, sangrado muy abundante o desmayos requieren orientación sanitaria."]],quiz:{q:"¿Qué afirmación sobre la pubertad es correcta?",opts:["Todas las personas cambian a la misma edad","El ritmo de desarrollo puede variar","Los cambios emocionales significan que algo está mal"],correct:1,why:"La pubertad tiene ritmos distintos. Si un cambio preocupa, un profesional de salud puede orientar sin juzgar."}},
+ {title:"Consentimiento y límites",sub:"Acuerdos libres, claros, informados y reversibles.",desc:"El consentimiento es una decisión libre y voluntaria. Debe existir sin presión, miedo, manipulación ni intoxicación. Se puede retirar en cualquier momento.",cards:[
+  ["Un sí debe ser libre","Aceptar por miedo, insistencia, chantaje o presión no es consentimiento. El silencio, quedarse paralizado o no responder tampoco significa que la otra persona esté de acuerdo."],
+  ["Se puede cambiar de opinión","Una persona puede decir que sí y luego detenerse. La otra debe respetarlo inmediatamente, sin discutir ni castigar."],
+  ["Límites y ayuda","Puedes expresar “no quiero”, “detente” o “necesito tiempo”. Si alguien no respeta tus límites, aléjate si puedes y busca apoyo de una persona adulta de confianza o un servicio especializado."]],scenario:{q:"Una persona insiste después de que su pareja dijo que no. ¿Qué debería hacer?",opts:["Seguir insistiendo hasta obtener un sí","Detenerse y respetar el límite","Decir que la otra persona exagera"],correct:1,why:"Un límite debe respetarse de inmediato. Insistir, amenazar o manipular invalida la libertad de decidir."}},
+ {title:"Prevención y anticoncepción",sub:"Métodos anticonceptivos, uso correcto y orientación.",desc:"Los métodos anticonceptivos ayudan a prevenir embarazos. El preservativo externo o interno también reduce el riesgo de muchas infecciones de transmisión sexual (ITS). Ningún método es perfecto.",cards:[
+  ["Preservativos","El preservativo externo o interno debe usarse correctamente desde el inicio hasta el final de cada relación sexual. Revisa fecha de vencimiento y empaque; usa uno nuevo cada vez. No uses dos preservativos a la vez ni reutilices uno."],
+  ["Otros métodos","Píldoras, implantes, inyectables, parches, anillos y dispositivos intrauterinos previenen embarazos, pero no protegen contra ITS. La elección depende de la salud, preferencias y acceso a orientación profesional."],
+  ["Anticoncepción de emergencia","Puede ayudar a prevenir un embarazo después de una relación sin protección o una falla del método. Debe buscarse cuanto antes; el personal de salud puede orientar sobre las opciones disponibles. No interrumpe un embarazo establecido."]],quiz:{q:"¿Qué método ayuda a reducir el riesgo de embarazo y también de muchas ITS?",opts:["Píldora anticonceptiva","Implante hormonal","Preservativo"],correct:2,why:"El preservativo es el método anticonceptivo que también reduce el riesgo de muchas ITS cuando se usa correctamente."}},
+ {title:"ITS: prevención y pruebas",sub:"Información, prevención, diagnóstico y tratamiento.",desc:"Las ITS pueden transmitirse por contacto sexual vaginal, anal u oral, y algunas también por sangre o durante el embarazo y parto. Muchas pueden no presentar síntomas.",cards:[
+  ["Prevención","Usar preservativo, vacunarse contra el VPH y la hepatitis B, realizarse pruebas cuando corresponda y no compartir agujas reduce riesgos. La prevención combina varias medidas."],
+  ["Pruebas y atención","No siempre se puede saber si alguien tiene una ITS por su apariencia. Las pruebas son la forma de detectarlas. Algunas ITS se curan y otras se controlan con tratamiento."],
+  ["Sin estigma","Tener una ITS no define el valor de una persona. Evita culpar o etiquetar. La atención temprana protege la salud propia y de otras personas."]],quiz:{q:"¿Cómo se puede saber con seguridad si alguien tiene una ITS?",opts:["Por su apariencia","Mediante pruebas indicadas por personal de salud","Preguntando si parece saludable"],correct:1,why:"Muchas ITS no presentan síntomas. Las pruebas son necesarias para detectarlas."}},
+ {title:"Embarazo y decisiones",sub:"Cómo ocurre un embarazo y dónde buscar orientación.",desc:"Un embarazo puede ocurrir cuando un espermatozoide fecunda un óvulo y este se implanta en el útero. La información y el acceso oportuno a servicios de salud ayudan a tomar decisiones.",cards:[
+  ["Comprender el proceso","La fecundación puede ocurrir cuando espermatozoides llegan al óvulo. El riesgo de embarazo depende de la situación y del uso correcto de métodos anticonceptivos."],
+  ["Si hubo una falla","Ante una relación sin protección, rotura del preservativo o preocupación por embarazo, busca orientación sanitaria cuanto antes para conocer las opciones disponibles y el momento adecuado para una prueba."],
+  ["Acompañamiento","Nadie debe ser obligado a tomar decisiones sobre su cuerpo. La atención debe ser confidencial según las normas aplicables, respetuosa y libre de violencia."]],scenario:{q:"Se rompió el preservativo y hay preocupación por un embarazo. ¿Qué conviene hacer?",opts:["Esperar semanas sin consultar","Buscar orientación de salud cuanto antes","Tomar medicamentos al azar"],correct:1,why:"La orientación temprana permite conocer la anticoncepción de emergencia y cuándo realizar una prueba. No se deben usar medicamentos sin indicación."}},
+ {title:"Relaciones y emociones",sub:"Vínculos saludables, comunicación y respeto mutuo.",desc:"Una relación saludable se construye con respeto, confianza, comunicación y libertad. Los celos, el control y el aislamiento no son pruebas de amor.",cards:[
+  ["Señales saludables","Puedes expresar opiniones, mantener amistades, decir que no y tomar decisiones sin miedo. Ambas personas respetan sus espacios y acuerdos."],
+  ["Señales de alerta","Revisar el celular sin permiso, exigir contraseñas, controlar la ropa, amenazar, humillar o aislar de amistades son conductas de control y violencia."],
+  ["Pedir apoyo","Hablar con una persona adulta de confianza, tutor, orientador o profesional puede ayudar. Si existe peligro inmediato, busca un lugar seguro y ayuda de emergencia."]],quiz:{q:"¿Cuál es una señal de una relación saludable?",opts:["Compartir contraseñas por obligación","Respetar la privacidad y los límites","Alejar a la pareja de sus amistades"],correct:1,why:"El respeto a la privacidad, la autonomía y los límites es esencial en una relación saludable."}},
+ {title:"Seguridad digital y desinformación",sub:"Privacidad, grooming, sextorsión y fuentes confiables.",desc:"Internet permite aprender y comunicarse, pero también existen riesgos. Nunca es culpa de quien recibe amenazas o manipulación: la responsabilidad es de quien agrede.",cards:[
+  ["Privacidad digital","No compartas datos personales, ubicación, contraseñas ni imágenes íntimas. Configura la privacidad de tus cuentas y piensa antes de publicar: una imagen puede copiarse o difundirse."],
+  ["Grooming y sextorsión","Desconfía de personas que piden mantener secretos, solicitan imágenes íntimas, ofrecen regalos a cambio o amenazan con publicar contenido. No envíes más material ni pagues; guarda evidencias, bloquea y denuncia con apoyo adulto."],
+  ["Desinformación","Contrasta la información con servicios de salud, organismos oficiales y profesionales. Desconfía de mensajes que prometen curas, culpan a un grupo o usan miedo y vergüenza para convencer."]],scenario:{q:"Una persona desconocida amenaza con publicar una imagen íntima si no le envías otra. ¿Qué haces?",opts:["Enviar otra para que se detenga","Pagar y mantenerlo en secreto","No enviar nada más, guardar pruebas y pedir ayuda"],correct:2,why:"No es tu culpa. No cedas al chantaje: guarda evidencias, bloquea y denuncia con apoyo de una persona adulta de confianza o autoridad competente."}}
+];
+const parts={
+ uterus:{name:"Útero",desc:"Órgano muscular donde puede desarrollarse un embarazo. Su revestimiento cambia durante el ciclo menstrual."},
+ ovaries:{name:"Ovarios",desc:"Producen óvulos y hormonas como estrógenos y progesterona."},
+ tubes:{name:"Trompas uterinas",desc:"Conductos que conectan la zona cercana a los ovarios con el útero. La fecundación suele ocurrir aquí."},
+ cervix:{name:"Cuello uterino",desc:"Parte inferior y estrecha del útero que comunica con la vagina."},
+ pelvis:{name:"Estructura pélvica",desc:"Estructura ósea que protege y sostiene órganos de la zona inferior del abdomen."},
+ shield:{name:"Autocuidado y prevención",desc:"La prevención combina información confiable, respeto por los límites, métodos de barrera y atención sanitaria."}
+};
+let THREE, scene,camera,renderer,controls,composer,model,objects=[],selected=null,playing=true,progress=0,speed=1,explode=0,autoRotate=false,showLabels=true,xray=false, sound=false, audioCtx=null;
+const RAD=Math.PI/180;
+function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove("show"),2100)}
+function updateModuleUI(i){$("#phaseNo").textContent=`MÓDULO ${String(i+1).padStart(2,"0")} / 08` ;$("#phaseName").textContent=modules[i].title;$("#progressText").textContent=`${String(i+1).padStart(2,"0")} / 08`;document.querySelectorAll(".step").forEach((b,j)=>b.classList.toggle("active",j===i%4));}
+function openModule(i){i=(i+modules.length)%modules.length;currentModule=i;updateModuleUI(i);$("#simView").style.display="none";$("#moduleView").style.display="block";const m=modules[i];$("#moduleTitle").textContent=m.title;$("#moduleSub").textContent=m.sub;let out=`<div class="content-card"><h4>Idea principal</h4><p>${m.desc}</p></div>`;m.cards.forEach(([h,p])=>out+=`<div class="content-card"><h4>${h}</h4><p>${p}</p></div>`);let activity=m.quiz||m.scenario;if(activity){out+=`<div class="content-card" id="activity"><h4>${m.quiz?"Comprueba lo aprendido":"Caso práctico"}</h4><p>${activity.q}</p>${activity.opts.map((o,j)=>`<button class="quiz-option" data-answer="${j}">${String.fromCharCode(65+j)}. ${o}</button>`).join("")}<div class="feedback" id="feedback"></div></div>`}out+=`<div class="note">Recuerda: esta herramienta es educativa y no reemplaza la orientación de profesionales de salud. Si tienes una duda personal, busca atención respetuosa y confiable.</div>`;$("#moduleContent").innerHTML=out;document.querySelectorAll(".quiz-option").forEach(b=>b.addEventListener("click",()=>{let ok=Number(b.dataset.answer)===activity.correct;let f=$("#feedback");f.className="feedback "+(ok?"good":"bad");f.textContent=(ok?"¡Correcto! ":"Revisemos la respuesta. ")+activity.why;document.querySelectorAll(".quiz-option").forEach(x=>{x.disabled=true;if(Number(x.dataset.answer)===activity.correct)x.style.borderColor="#49d3bd"})}));}
+let currentModule=0;
+function closeModule(){$("#moduleView").style.display="none";$("#simView").style.display="block"}
+function buildModuleList(){modules.forEach((m,i)=>{let b=document.createElement("button");b.className="module";b.innerHTML=`<span class="num">${String(i+1).padStart(2,"0")}</span><span><b>${m.title}</b><small>${m.sub}</small></span>`;b.onclick=()=>openModule(i);$("#moduleList").appendChild(b)})}
+function init3D(){
+ const host=$("#viewport");scene=new THREE.Scene();scene.fog=new THREE.Fog(0x0a1425,12,34);
+ camera=new THREE.PerspectiveCamera(40,1,.1,100);camera.position.set(0,1.2,12);
+ renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;host.appendChild(renderer.domElement);
+ const {OrbitControls}=window.__unused||{}; 
+ import("three/addons/controls/OrbitControls.js").then(({OrbitControls})=>{controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.07;controls.minDistance=5;controls.maxDistance=20;controls.target.set(0,0,0)});
+ scene.add(new THREE.HemisphereLight(0xaacbff,0x291c34,1.2));
+ const key=new THREE.DirectionalLight(0xffd8e8,2.2);key.position.set(5,7,8);key.castShadow=true;scene.add(key);
+ const rim=new THREE.PointLight(0x55a7ff,28,20);rim.position.set(-5,2,-3);scene.add(rim);
+ const pink=new THREE.PointLight(0xef78b5,18,18);pink.position.set(4,-2,4);scene.add(pink);
+ const floor=new THREE.Mesh(new THREE.CircleGeometry(5,64),new THREE.MeshStandardMaterial({color:0x172b48,metalness:.45,roughness:.65,transparent:true,opacity:.45}));floor.rotation.x=-Math.PI/2;floor.position.y=-3.3;scene.add(floor);
+ const ring=new THREE.Mesh(new THREE.TorusGeometry(3.5,.025,8,100),new THREE.MeshBasicMaterial({color:0x55a7ff,transparent:true,opacity:.5}));ring.rotation.x=Math.PI/2;ring.position.y=-3.25;scene.add(ring);
+ model=new THREE.Group();scene.add(model);
+ const mat=(color,metalness=.25,roughness=.45,emissive=0)=>new THREE.MeshStandardMaterial({color,metalness,roughness,emissive,emissiveIntensity:.25});
+ const pinkMat=mat(0xd86e9f,.25,.42,0x421329),rose=mat(0xe9a0bd,.18,.48),blue=mat(0x55a7ff,.35,.35,0x102b55),bone=mat(0x9cb3d2,.45,.55),teal=mat(0x49d3bd,.2,.4,0x123f3a);
+ function mesh(geo,material,pos,scale=[1,1,1],name=null){let o=new THREE.Mesh(geo,material);o.position.set(...pos);o.scale.set(...scale);o.castShadow=true;o.receiveShadow=true;if(name){o.userData.partId=name;objects.push(o)}model.add(o);return o}
+ // Pelvis: stylized open horseshoe, intentionally schematic and non-graphic.
+ const pelvicL=mesh(new THREE.TorusGeometry(1.85,.18,12,48,Math.PI*.78),bone,[-.05,-.25,0],[1,1.1,.65],"pelvis");pelvicL.rotation.z=Math.PI*.1;
+ const pelvicR=mesh(new THREE.TorusGeometry(1.85,.18,12,48,Math.PI*.78),bone,[.05,-.25,0],[1,1.1,.65],"pelvis");pelvicR.rotation.z=Math.PI*1.1;
+ // Uterus body and cervix
+ const body=mesh(new THREE.SphereGeometry(1,32,24),pinkMat,[0,.1,0],[.78,1.08,.48],"uterus");
+ const fundus=mesh(new THREE.SphereGeometry(1,28,20),rose,[0,.76,0],[.82,.48,.48],"uterus");
+ const cervix=mesh(new THREE.CylinderGeometry(.28,.34,.75,24),pinkMat,[0,-1.05,0],[1,1,.85],"cervix");
+ const cavity=mesh(new THREE.SphereGeometry(1,24,18),mat(0xffb5cf,.1,.6),[0,.22,.43],[.34,.68,.08],"uterus");
+ // Tubes: curved tube geometry
+ function tube(points,r,material,name){let curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p)));let o=new THREE.Mesh(new THREE.TubeGeometry(curve,48,r,10,false),material);o.userData.partId=name;model.add(o);objects.push(o);return o}
+ tube([[-.55,.6,0],[-1.2,1.05,0],[-1.8,1.15,0],[-2.25,.72,0]],.105,rose,"tubes");
+ tube([[.55,.6,0],[1.2,1.05,0],[1.8,1.15,0],[2.25,.72,0]],.105,rose,"tubes");
+ mesh(new THREE.SphereGeometry(.43,24,18),blue,[-2.35,.65,0],[1,1,.75],"ovaries");
+ mesh(new THREE.SphereGeometry(.43,24,18),blue,[2.35,.65,0],[1,1,.75],"ovaries");
+ // Small follicle dots
+ for(let side of [-1,1])for(let j=0;j<4;j++){let a=j*Math.PI/2;mesh(new THREE.SphereGeometry(.075,12,10),teal,[side*2.35+Math.cos(a)*.28,.65+Math.sin(a)*.28,.29],[1,1,1],"ovaries")}
+ // A translucent protective sphere as an educational symbol, positioned behind model.
+ const halo=new THREE.Mesh(new THREE.TorusGeometry(3.05,.025,8,100),new THREE.MeshBasicMaterial({color:0x49d3bd,transparent:true,opacity:.6}));halo.position.z=-.6;model.add(halo);
+ // floating molecule-like points
+ for(let i=0;i<42;i++){let a=i*2.399,r=2.7+(i%5)*.2;let p=new THREE.Mesh(new THREE.SphereGeometry(.025+(i%3)*.009,8,8),new THREE.MeshBasicMaterial({color:i%2?0x55a7ff:0xef78b5,transparent:true,opacity:.55}));p.position.set(Math.cos(a)*r,Math.sin(a)*r*.65,-.7-(i%4)*.2);model.add(p)}
+ // Guardar posiciones originales para que la vista expandida sea reversible.
+ objects.forEach(o=>{o.userData.basePosition=o.position.clone()});
+ // Shield icon in scene base
+ const shield=mesh(new THREE.IcosahedronGeometry(.48,1),teal,[0,-2.45,.5],[1,1,1],"shield");
+ shield.userData.basePosition=shield.position.clone();
+ const wire=new THREE.Mesh(new THREE.IcosahedronGeometry(.59,1),new THREE.MeshBasicMaterial({color:0x49d3bd,wireframe:true,transparent:true,opacity:.55}));wire.position.copy(shield.position);model.add(wire);
+ const labelDefs=[["Útero",0,.7,.55,"uterus"],["Trompas",1.55,1.38,.2,"tubes"],["Ovarios",2.7,.6,.2,"ovaries"],["Cuello uterino",0,-1.5,.4,"cervix"],["Pelvis",-2.1,-1.35,0,"pelvis"],["Prevención",.9,-2.5,.5,"shield"]];
+ const labelEls=[];
+ labelDefs.forEach(([txt,x,y,z,id])=>{let el=document.createElement("button");el.className="tag";el.textContent=txt;el.onclick=()=>selectPart(id);$("#labels").appendChild(el);labelEls.push({el,pos:new THREE.Vector3(x,y,z),id})});
+ const anchors={uterus:new THREE.Vector3(0,.25,.5),ovaries:new THREE.Vector3(2.35,.65,.3),tubes:new THREE.Vector3(1.45,1.12,.1),cervix:new THREE.Vector3(0,-1.2,.4),pelvis:new THREE.Vector3(-1.9,-1.2,0),shield:new THREE.Vector3(.6,-2.45,.5)};
+ const labelNames=Object.keys(parts);labelNames.forEach(id=>{let b=document.createElement("button");b.className="part-chip";b.textContent=parts[id].name;b.onclick=()=>selectPart(id);$("#partLegend").appendChild(b)});
+ const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();let down=null;
+ renderer.domElement.addEventListener("pointerdown",e=>{down={x:e.clientX,y:e.clientY,t:performance.now()}});
+ renderer.domElement.addEventListener("pointerup",e=>{if(!down||Math.hypot(e.clientX-down.x,e.clientY-down.y)>6||performance.now()-down.t>450)return;const rect=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-rect.left)/rect.width)*2-1;pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;raycaster.setFromCamera(pointer,camera);let hits=raycaster.intersectObjects(objects,true);if(hits.length)selectPart(hits[0].object.userData.partId)});
+ function selectPart(id){selected=id;let p=parts[id];$("#selection").style.display="block";$("#selName").textContent=p.name;$("#selDesc").textContent=p.desc;document.querySelectorAll(".part-chip").forEach(b=>b.classList.toggle("active",b.textContent===p.name));objects.forEach(o=>{if(o.material&&o.material.emissive)o.material.emissive.setHex(o.userData.partId===id?0x44203c:0x000000)})}
+ window.selectPart=selectPart;
+ function updateLabels(){labelEls.forEach(({el,pos})=>{let v=pos.clone().project(camera),x=(v.x*.5+.5)*host.clientWidth,y=(-v.y*.5+.5)*host.clientHeight;el.style.left=x+"px";el.style.top=y+"px";el.style.display=showLabels&&v.z<1&&x>0&&x<host.clientWidth&&y>0&&y<host.clientHeight?"block":"none"})}
+ function resize(){let w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
+ new ResizeObserver(resize).observe(host);resize();
+ let clock=new THREE.Clock();
+ function animate(){renderer.setAnimationLoop(()=>{let dt=Math.min(clock.getDelta(),.04);if(playing){progress=(progress+dt*.13*speed)%1;$("#phaseNo").textContent=`MÓDULO ${String(currentModule+1).padStart(2,"0")} / 08`; }if(autoRotate&&controls)model.rotation.y+=dt*.14;let target=explode;objects.forEach(o=>{if(o.userData.basePosition){let base=o.userData.basePosition,dir=base.clone().normalize();let dest=base.clone().add(new THREE.Vector3(dir.x*target*.65,dir.y*target*.65,dir.z*target*.35));o.position.lerp(dest,.08)}});model.scale.setScalar(1+Math.sin(clock.elapsedTime*1.1)*.008);updateLabels();if(controls)controls.update();renderer.render(scene,camera)})}
+ animate();
+ $("#loader").classList.add("done");
+ window.sexSelect=selectPart;
+ window.sexSetCamera=(v)=>{let p={front:[0,1.2,12],side:[12,1,0],top:[0,12,.01],iso:[8,7,10]}[v];camera.position.set(...p);if(controls){controls.target.set(0,0,0);controls.update()}};
+ window.sexResize=resize;
+}
+try{
+ const THREEmod=await import("three");THREE=THREEmod;
+ init3D();
+}catch(e){console.error(e);$("#loader").innerHTML='<div class="loader-inner">No se pudo cargar la escena 3D. Revisa tu conexión a internet y recarga la página.<br><br><button class="btn" onclick="location.reload()">Reintentar</button></div>'}
+buildModuleList();
+$("#backBtn").onclick=closeModule;$("#openLearning").onclick=()=>openModule(currentModule);$("#prevModule").onclick=()=>openModule(currentModule-1);$("#nextModule").onclick=()=>openModule(currentModule+1);
+$("#playBtn").onclick=()=>{playing=!playing;$("#playBtn").textContent=playing?"Ⅱ Pausar":"▶ Reproducir";toast(playing?"Recorrido en marcha":"Recorrido pausado")};
+$("#stepBtn").onclick=()=>{openModule(currentModule+1);toast("Siguiente módulo")};
+$("#speed").oninput=e=>{speed=+e.target.value;$("#speedVal").textContent=speed.toFixed(1)+"×"};
+$("#explode").oninput=e=>{explode=+e.target.value/100;$("#explodeVal").textContent=e.target.value+"%";$("#explodeBtn").textContent=explode?"◈ Reunir elementos":"◈ Vista expandida"};
+$("#explodeBtn").onclick=()=>{$("#explode").value=explode?0:65;$("#explode").dispatchEvent(new Event("input"))};
+$("#xray").onchange=e=>{xray=e.target.checked;objects.forEach(o=>{if(o.material&&o.material.transparent!==undefined){o.material.transparent=xray;o.material.opacity=xray?.58:1}});toast(xray?"Vista de capas activada":"Vista normal")};
+$("#labelsToggle").onchange=e=>{showLabels=e.target.checked;$("#labels").style.display=showLabels?"block":"none"};
+$("#rotateToggle").onchange=e=>{autoRotate=e.target.checked};
+$("#quality").onchange=e=>{let d={high:2,medium:1.5,low:1}[e.target.value];if(renderer)renderer.setPixelRatio(Math.min(devicePixelRatio,d));toast("Calidad: "+e.target.options[e.target.selectedIndex].text)};
+document.querySelectorAll(".cam").forEach(b=>b.onclick=()=>window.sexSetCamera?.(b.dataset.cam));
+$("#randomBtn").onclick=()=>{if(camera){camera.position.set((Math.random()-.5)*15,3+Math.random()*5,8+Math.random()*6);controls?.update()}toast("Nueva perspectiva")};
+$("#centerBtn").onclick=()=>window.sexSetCamera?.("iso");
+$("#resetBtn").onclick=()=>{explode=0;$("#explode").value=0;$("#explode").dispatchEvent(new Event("input"));playing=true;$("#playBtn").textContent="Ⅱ Pausar";$("#rotateToggle").checked=false;autoRotate=false;$("#xray").checked=false;xray=false;$("#labelsToggle").checked=true;showLabels=true;$("#labels").style.display="block";window.sexSetCamera?.("iso");$("#selection").style.display="none";toast("Simulador reiniciado")};
+$("#captureBtn").onclick=()=>{if(!renderer)return;let a=document.createElement("a");a.download="SexIA-modelo-educativo.png";a.href=renderer.domElement.toDataURL("image/png");a.click();toast("Captura PNG preparada")};
+$("#fullBtn").onclick=()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.()};
+$("#soundBtn").onclick=()=>{sound=!sound;$("#soundBtn").innerHTML=sound?"♫ <span class='long'>Sonido: activado</span>":"♫ <span class='long'>Sonido: apagado</span>";if(sound){try{audioCtx??=new AudioContext();let osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.frequency.value=440;gain.gain.value=.025;osc.connect(gain);gain.connect(audioCtx.destination);osc.start();osc.stop(audioCtx.currentTime+.08)}catch(e){}}toast(sound?"Sonido activado":"Sonido apagado")};
+document.querySelectorAll(".step").forEach(b=>b.onclick=()=>openModule(+b.dataset.phase));
+document.addEventListener("keydown",e=>{if(["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName))return;if(e.code==="Space"){e.preventDefault();$("#playBtn").click()}if(e.key.toLowerCase()==="e")$("#explodeBtn").click();if(e.key.toLowerCase()==="x"){$("#xray").click()}if(e.key.toLowerCase()==="l")$("#labelsToggle").click();if(e.key.toLowerCase()==="r")$("#resetBtn").click();if(e.key==="ArrowRight")$("#stepBtn").click();if(e.key==="Escape"){$("#selection").style.display="none";closeModule()}});
+</script>
+</body></html>
